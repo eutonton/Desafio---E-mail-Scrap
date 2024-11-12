@@ -1,4 +1,3 @@
-// email.js
 require('dotenv').config();
 const nodemailer = require('nodemailer');
 
@@ -33,10 +32,10 @@ async function sendEmail(data) {
             <tbody>
                 ${data.map(scorer => `
                     <tr>
-                        <td>${scorer.player}</td>
-                        <td>${scorer.goals}</td>
-                        <td>${scorer.age}</td>
-                        <td>${scorer.club}</td>
+                        <td>${scorer.nome || 'Indefinido'}</td>
+                        <td>${scorer.gols || 'Indefinido'}</td>
+                        <td>${scorer.idade || 'Indefinido'}</td>
+                        <td>${scorer.clube || 'Indefinido'}</td>
                     </tr>`).join('')}
             </tbody>
         </table>

@@ -1,14 +1,11 @@
-// main.js
 require('dotenv').config();
-const { scrapeTopScorers } = require('./scrape');  // Importando função de scraping
-const { sendEmail } = require('./email');          // Importando função de envio de e-mail
+const { getPlayersData } = require('./scrape');
+const { sendEmail } = require('./email');
 
 async function main() {
-    // Realiza o scraping dos dados
-    const scorersData = await scrapeTopScorers();
-    console.log(scorersData); // Apenas para confirmar os dados no console
+    const scorersData = await getPlayersData();
+    console.log(scorersData); // Verifica se os dados estão corretos
 
-    // Envia os dados por e-mail
     await sendEmail(scorersData);
 }
 

@@ -1,33 +1,66 @@
 // scrape.js
 const puppeteer = require('puppeteer');
 
-async function scrapeTopScorers() {
+async function getPlayersData() {
     const url = 'https://www.transfermarkt.com.br/uefa-champions-league/torschuetzenliste/pokalwettbewerb/CL';
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: 'load', timeout: 0 });
 
-    const scorersData = await page.evaluate(() => {
-        const rows = document.querySelectorAll('.items tbody tr');
-        const data = [];
-
+    const playersData = await page.evaluate(() => {
+        const players = [];
+        
+        // Verificando a estrutura da página e se estamos acessando a tabela corretamente
+        const rows = document.querySelectorAll('.items tr');
+        
+        // Para cada linha da tabela, extraímos os dados
         rows.forEach(row => {
-            const player = row.querySelector('.spielprofil_tooltip')?.innerText.trim();
-            const goals = row.querySelectorAll('td')[4]?.innerText.trim();
-            const age = row.querySelectorAll('td')[2]?.innerText.trim();
-            const club = row.querySelectorAll('td')[1]?.querySelector('img')?.alt;
+            const player = {};
 
-            if (player && goals && age && club) {
-                data.push({ player, goals, age, club });
+            // Nome do jogador
+            const playerName = row.querySelector('td:nth-child(2) a');
+            if (playerName) {
+                player.nome = playerName.textContent.trim();
+            }
+
+            // Nacionalidade do jogador
+            const nationality = row.querySelector('td:nth-child(3) img');
+            if (nationality) {
+                player.nacionalidade = nationality.getAttribute('title');
+            }
+
+            // Gols
+            const goals = row.querySelector('td:nth-child(7) a');
+            if (goals) {
+                player.gols = goals.textContent.trim();
+            }
+
+            // Clube
+            const club = row.querySelector('td:nth-child(5) a');
+            if (club) {
+                player.clube = club.textContent.trim();
+            }
+
+            // Idade
+            const age = row.querySelector('td:nth-child(4)');
+            if (age) {
+                player.idade = age.textContent.trim();
+            }
+
+            // Verifica se os dados essenciais (nome e gols) estão presentes
+            if (player.nome && player.gols) {
+                players.push(player);
+            } else {
+                // Para depuração, se faltar algum dado, loga os detalhes da linha
+                console.log('Dados ausentes para uma linha:', row);
             }
         });
 
-        return data;
+        return players;
     });
 
     await browser.close();
-    return scorersData;
+    return playersData;
 }
 
-// Exporta a função de scraping
-module.exports = { scrapeTopScorers };
+module.exports = { getPlayersData };  // Exporte a função
