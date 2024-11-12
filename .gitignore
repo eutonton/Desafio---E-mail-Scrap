@@ -1,17 +1,1 @@
-# Ignorar arquivos .env
 .env
-
-# Outros arquivos que geralmente são ignorados em projetos Node.js
-node_modules/
-npm-debug.log
-yarn-error.log
-dist/
-build/
-
-# Ignorar arquivos de IDEs/editores populares
-.vscode/
-.idea/
-
-# Ignorar arquivos de sistema
-.DS_Store
-Thumbs.db
